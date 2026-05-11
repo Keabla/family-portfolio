@@ -1,0 +1,26 @@
+candidate_id,rank,security_name,weight_pct,sector,country,as_of_date
+world_hedged,1,Apple Inc,4.82,Technology,United States,2026-05-10 arkets.ft
+world_hedged,2,NVIDIA Corp,3.9,Technology,United States,05/10/26
+world_hedged,3,Microsoft Corp,3.85,Technology,United States,05/10/26
+world_hedged,4,Amazon.com Inc,2.68,Consumer Discretionary,United States,05/10/26
+world_hedged,5,Meta Platforms Inc,1.95,Communication Services,United States,05/10/26
+world_equal_weight,1,First Citizens Bncsh /NC,0.15,Financials,United States,05/10/26
+world_equal_weight,2,"Constellation Software, Inc.",0.14,Information Technology,Canada,05/10/26
+world_equal_weight,3,Barry Callebaut,0.14,Consumer Staples,Switzerland,05/10/26
+world_equal_weight,4,Rheinmetall AG,0.14,Industrials,Germany,05/10/26
+world_equal_weight,5,Fairfax Financial Holdings Ltd.,0.14,Financials,Canada,05/10/26
+europe,1,ASML Holding NV,4.04,Technology,Netherlands,05/10/26
+europe,2,HSBC Holdings PLC,2.18,Financials,United Kingdom,05/10/26
+europe,3,AstraZeneca PLC,2.08,Health Care,United Kingdom,05/10/26
+europe,4,Roche Holding AG Ordinary Shares new,2.05,Health Care,Switzerland,05/10/26
+europe,5,Novartis AG Registered Shares,1.95,Health Care,Switzerland,05/10/26
+defense_global,1,Lockheed Martin,9.27,Industrials,United States,05/10/26
+defense_global,2,Northrop Grumman,8.76,Industrials,United States,05/10/26
+defense_global,3,BAE Systems,8.74,Industrials,United Kingdom,05/10/26
+defense_global,4,L3Harris Technologies,8.28,Industrials,United States,05/10/26
+defense_global,5,RTX,7.89,Industrials,United States,05/10/26
+defense_europe,1,BAE Systems PLC,15.73,Industrials,United Kingdom,05/10/26
+defense_europe,2,Thales SA,13.03,Industrials,France,05/10/26
+defense_europe,3,Leonardo SpA,12.56,Industrials,Italy,05/10/26
+defense_europe,4,Rolls-Royce Holdings,12.26,Industrials,United Kingdom,05/10/26
+defense_europe,5,Rheinmetall AG,11.42,Industrials,Germany,05/10/26

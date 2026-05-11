@@ -1,0 +1,176 @@
+# policy.yaml — Investment Policy Statement (machine-readable)
+version: "1.1-draft"
+last_updated: "2026-05-10"
+currency: EUR
+broker: fineco
+tax_residency: IT
+
+capital:
+  total_eur: 1_000_000
+  deployed_eur: 0
+  remaining_eur: 1_000_000
+
+deployment:
+  mode: dca_weekly
+  tranche_eur: 100_000
+  expected_tranches: 10
+  decision_day: monday
+  execution_day: tuesday
+  first_tranche_date: "2026-05-12"
+  first_tranche_plan: "€35k BTP Italia + €65k cash; allocation locked before tranche 2"
+
+constraints:
+  weights_sum_to: 1.0
+  cash_min: 0.05
+  btp_italia_fixed: 0.35
+  total_equity_min: 0.40
+  total_equity_max: 0.70
+  max_single_thematic: 0.10
+  max_total_thematic: 0.20
+
+# weight_min == weight_max means locked.
+candidates:
+  - id: cash
+    name: "Cash EUR"
+    asset_class: cash
+    weight_min: 0.05
+    weight_max: 0.10
+    isin: null
+    yf_ticker: null
+    currency: EUR
+    is_thematic: false
+    has_equity_pe: false
+    holdings_source: none
+
+  - id: btp_italia
+    name: "BTP Italia inflation-linked"
+    asset_class: bond_govt_inflation_linked
+    weight_min: 0.35
+    weight_max: 0.35
+    isin: IT0005497000
+    yf_ticker: null
+    currency: EUR
+    is_thematic: false
+    has_equity_pe: false
+    holdings_source: none
+    tax_rate_capital_gains: 0.125
+    static_yield_pct: 2.11       # REAL net YTM (rendimento netto a scadenza) as of 2026-05-10; fetch adds Italian HICP to get nominal
+    coupon_pct: 1.60             # annual coupon (inflation-linked base)
+    maturity_date: "2030-06-28"
+
+  - id: commodities
+    name: "iShares Diversified Commodity Swap"
+    asset_class: commodities
+    weight_min: 0.0
+    weight_max: 0.10
+    isin: IE00BG88WG77
+    yf_ticker: "ICOM.MI"       # trading ticker on Borsa Italiana (not on Yahoo Finance)
+    data_ticker: "ICOM.L"      # same fund, London listing — used for yfinance data fetch
+    currency: EUR
+    is_thematic: false
+    has_equity_pe: false
+    holdings_source: ishares
+    ishares_product_id: "258510"
+
+  - id: world_hedged
+    name: "Invesco MSCI World EUR Hedged"
+    asset_class: equity_developed_global
+    weight_min: 0.0
+    weight_max: 0.25
+    isin: IE00055B2JD3
+    yf_ticker: "MXFE.MI"       # trading ticker on Borsa Italiana (not on Yahoo Finance)
+    data_ticker: "MXWO.L"      # unhedged Invesco MSCI World (LSE, USD); prices are EUR-converted
+    currency: EUR
+    is_thematic: false
+    has_equity_pe: true
+    holdings_source: manual
+
+  - id: world_equal_weight
+    name: "Invesco MSCI World Equal Weight"
+    asset_class: equity_developed_global
+    weight_min: 0.0
+    weight_max: 0.50
+    isin: IE000OEF25S1
+    yf_ticker: "MWEQ.L"
+    currency: USD
+    is_thematic: false
+    has_equity_pe: true
+    holdings_source: manual
+
+  - id: em_ex_china
+    name: "iShares MSCI EM ex-China"
+    asset_class: equity_emerging
+    weight_min: 0.0
+    weight_max: 0.15
+    isin: IE00BMG6Z448
+    yf_ticker: "EMXC.MI"
+    pe_ticker: "EMXC"           # US-listed version of the same fund; used for P/E only
+    currency: EUR
+    is_thematic: false
+    has_equity_pe: true
+    holdings_source: ishares
+    ishares_product_id: "307721"
+
+  - id: europe
+    name: "Amundi MSCI Europe"
+    asset_class: equity_developed_europe
+    weight_min: 0.0
+    weight_max: 0.20
+    isin: LU0908500753
+    yf_ticker: "CEU.MI"
+    currency: EUR
+    is_thematic: false
+    has_equity_pe: true
+    holdings_source: manual
+
+  - id: defense_global
+    name: "VanEck Defense"
+    asset_class: equity_thematic
+    weight_min: 0.0
+    weight_max: 0.10
+    isin: IE000YYE6WK5
+    yf_ticker: "DFNS.MI"
+    pe_ticker: "SHLD"           # Global X Defense Tech ETF (US); closest global defense proxy for P/E
+    currency: EUR
+    is_thematic: true
+    has_equity_pe: true
+    holdings_source: manual
+
+  - id: defense_europe
+    name: "WisdomTree Europe Defence"
+    asset_class: equity_thematic
+    weight_min: 0.0
+    weight_max: 0.10
+    isin: IE0002Y8CX98
+    yf_ticker: "WDEF.MI"
+    currency: EUR
+    is_thematic: true
+    has_equity_pe: true
+    holdings_source: manual
+
+  - id: ai_infrastructure
+    name: "iShares AI Infrastructure"
+    asset_class: equity_thematic
+    weight_min: 0.0
+    weight_max: 0.10
+    isin: IE000NDWFGA5
+    yf_ticker: "AINF.MI"
+    pe_ticker: "BOTZ"           # Global X Robotics & AI ETF (US); closest AI-infrastructure proxy for P/E
+    currency: EUR
+    is_thematic: true
+    has_equity_pe: true
+    holdings_source: ishares
+    ishares_product_id: "338777"
+
+rebalancing:
+  drift_band_alert_pp: 2.0
+  drift_band_action_pp: 5.0
+  prefer_buy_underweights: true
+  allow_sell_to_rebalance: false
+  no_trade_drawdown_pct: 10
+
+fiscal:
+  capital_gains_etf: 0.26
+  capital_gains_govt_bonds: 0.125
+  ivafe_annual_rate: 0.002
+  losses_carryforward_years: 4
