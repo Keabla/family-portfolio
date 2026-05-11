@@ -17,6 +17,10 @@ Data inputs (from data/):
 from __future__ import annotations
 from pathlib import Path
 import json
+import datetime as dt
+import subprocess
+import sys
+import time
 import pandas as pd
 import numpy as np
 import yaml
@@ -47,8 +51,31 @@ DATA = ROOT / "data"
 POLICY_PATH = ROOT / "policy.yaml"
 SCENARIOS_PATH = DATA / "scenarios.json"
 
+
+def ensure_data_fresh() -> None:
+    if st.session_state.get("_data_checked"):
+        return
+    st.session_state["_data_checked"] = True
+    DATA_TTL_SECONDS = 3600
+    snapshot = DATA / "metrics_snapshot.csv"
+    first_run = not snapshot.exists() or snapshot.stat().st_size == 0
+    if not first_run and (time.time() - snapshot.stat().st_mtime) < DATA_TTL_SECONDS:
+        return
+    msg = "Fetching data for the first time…" if first_run else "Data is stale, refreshing…"
+    with st.spinner(msg):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "fetch_data.py")],
+            capture_output=True,
+            text=True,
+        )
+    if result.returncode != 0:
+        st.error(f"Data fetch failed:\n```\n{result.stderr or result.stdout}\n```")
+        st.stop()
+
+
 st.set_page_config(page_title="Allocation Designer", layout="wide")
 require_password()
+ensure_data_fresh()
 
 # ---------- Data loading (cached) ----------
 @st.cache_data
@@ -85,12 +112,24 @@ metrics_by_id = metrics.set_index("id").to_dict("index") if not metrics.empty el
 st.sidebar.title("Allocation Designer")
 st.sidebar.caption(f"Capital: €{policy['capital']['total_eur']:,}")
 st.sidebar.caption(f"BTP fixed: 35% (€350,000)")
+_snap = DATA / "metrics_snapshot.csv"
+if _snap.exists() and _snap.stat().st_size > 0:
+    _age_min = int((time.time() - _snap.stat().st_mtime) / 60)
+    st.sidebar.caption(f"Data age: {_age_min} min")
+if st.sidebar.button("🔄 Refresh data"):
+    with st.spinner("Refreshing data…"):
+        _result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "fetch_data.py")],
+            capture_output=True,
+            text=True,
+        )
+    if _result.returncode != 0:
+        st.sidebar.error(f"Refresh failed:\n```\n{_result.stderr or _result.stdout}\n```")
+    else:
+        st.cache_data.clear()
+        st.rerun()
 if metrics.empty:
     st.sidebar.error("Run `python scripts/fetch_data.py` first.")
-last_refresh = (DATA / "metrics_snapshot.csv").stat().st_mtime if (DATA / "metrics_snapshot.csv").exists() else None
-if last_refresh:
-    import datetime as dt
-    st.sidebar.caption(f"Data refreshed: {dt.datetime.fromtimestamp(last_refresh):%Y-%m-%d %H:%M}")
 
 tab_design, tab_compare, tab_overlap, tab_scenarios = st.tabs(
     ["🎚️ Designer", "📊 Compare", "🔁 Overlap", "💾 Scenarios"]
