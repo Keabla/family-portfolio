@@ -9,7 +9,6 @@ data/metrics_snapshot.csv
 data/prices_history.parquet
 data/macro_snapshot.csv
 data/holdings_top5.csv
-data/scenarios.json
 cache/
 
 # Secrets — NEVER commit

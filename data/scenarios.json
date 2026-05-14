@@ -1,0 +1,17 @@
+{
+  "Martin scenario 1 ": {
+    "weights": {
+      "cash": 0.05,
+      "btp_italia": 0.35,
+      "commodities": 0.05,
+      "world_hedged": 0.0,
+      "world_equal_weight": 0.3,
+      "em_ex_china": 0.05,
+      "europe": 0.1,
+      "defense_global": 0.0,
+      "defense_europe": 0.05,
+      "ai_infrastructure": 0.05
+    },
+    "saved_at": "2026-05-10T21:56:52.775072"
+  }
+}
